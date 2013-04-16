@@ -1,5 +1,3 @@
-int engines_switch = 13;
-
 int left_pwm = 5;
 int left_state = 4;
 int right_pwm = 3;
@@ -15,6 +13,15 @@ int rangeEcho = 7;
 int stopRange = 25;
 
 char currentAction = ' ';
+char currentRoutine = ' ';
+
+int enginesState = 0;
+
+int state_led = 13;
+int engines_switch = 12;
+
+int prevButtonState = HIGH;
+int currentButtonState = HIGH;
 
 void setup() {
   
@@ -26,6 +33,9 @@ void setup() {
   
   // Engines switch
   pinMode(engines_switch, INPUT_PULLUP);
+  
+  pinMode(state_led, OUTPUT);
+  digitalWrite(state_led,LOW);
   
   //Range meter
   pinMode(rangeTrig, OUTPUT);
@@ -52,7 +62,7 @@ void forward() {
   
   currentAction = 'f';
   
-  if (digitalRead(engines_switch) == LOW) {
+  if (enginesState == 1) {
   
     analogWrite(left_pwm,currentSpeed);
     digitalWrite(left_state,0);
@@ -69,7 +79,7 @@ void back() {
   
   currentAction = 'b';
   
-  if (digitalRead(engines_switch) == LOW) {
+  if (enginesState == 1) {
   
     analogWrite(left_pwm,255-currentSpeed);
     digitalWrite(left_state,1);
@@ -95,12 +105,12 @@ void turn_left() {
   
   currentAction = 'l';
   
-  if (digitalRead(engines_switch) == LOW) {
+  if (enginesState == 1) {
   
-    analogWrite(left_pwm,currentSpeed);
-    digitalWrite(left_state,0);
-    analogWrite(right_pwm,255-currentSpeed);
-    digitalWrite(right_state,1);
+    analogWrite(right_pwm,currentSpeed);
+    digitalWrite(right_state,0);
+    analogWrite(left_pwm,255-currentSpeed);
+    digitalWrite(left_state,1);
   
   }
 }
@@ -109,12 +119,12 @@ void turn_right() {
   
   currentAction = 'r';
   
-  if (digitalRead(engines_switch) == LOW) {
+  if (enginesState == 1) {
   
-    analogWrite(left_pwm,255-currentSpeed);
-    digitalWrite(left_state,1);
-    analogWrite(right_pwm,currentSpeed);
-    digitalWrite(right_state,0);
+    analogWrite(right_pwm,255-currentSpeed);
+    digitalWrite(right_state,1);
+    analogWrite(left_pwm,currentSpeed);
+    digitalWrite(left_state,0);
   
   }
   
@@ -127,18 +137,42 @@ void loop() {
   
   currentRange = getRange();
   
+  currentButtonState = digitalRead(engines_switch);
+  
+  if (prevButtonState != currentButtonState && currentButtonState == LOW) {
+
+    if (enginesState == 1) {
+      enginesState = 0;
+      digitalWrite(state_led,LOW);
+    }else {
+      enginesState = 1;
+      digitalWrite(state_led,HIGH);
+    }
+
+    delay(100);
+  }
+  
+  prevButtonState = currentButtonState;
+  
   if (currentRange > stopRange) {
-    forward(); 
+    forward();
+    currentRoutine = 'd';
     actionDelay = 50;
   }else {
     
-    if (currentAction != 'l') {
+    if (currentRoutine != 'e') {
       engine_stop();
+      delay(400);
+      back();
       delay(500);
+      engine_stop();
+      delay(300);
     }
     
+    currentRoutine = 'e';
+    
     turn_left();
-    actionDelay = 800;
+    actionDelay = 750;
   }
   
   delay(actionDelay);
