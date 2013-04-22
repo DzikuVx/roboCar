@@ -154,6 +154,7 @@ void loop() {
   
   prevButtonState = currentButtonState;
   
+  //Movement routines
   if (currentRange > stopRange) {
     forward();
     currentRoutine = 'd';
@@ -164,15 +165,19 @@ void loop() {
       engine_stop();
       delay(400);
       back();
-      delay(500);
+      delay(random(3,6) * 100);
       engine_stop();
       delay(300);
     }
     
     currentRoutine = 'e';
     
-    turn_left();
-    actionDelay = 750;
+    if (random(0,1) == 1) {
+      turn_left();
+    }else {
+      turn_right();
+    }
+    actionDelay = random(4,7) * 100;
   }
   
   delay(actionDelay);
