@@ -10,5 +10,9 @@ Current program implements following algorithm :
 * when obstacle is detected, turn left or right (random)
 * goto 1
 
-Motor driver uses single LM293D. Motors on one side chassis are bridged and always rotates in the same direction. Diagram will be added later.
+Motor driver uses single L293D. Motors on one side chassis are bridged and always rotates in the same direction. Diagram will be added later.
 Basic PWN speed conrol is also implemented.
+
+## Electrical diagram
+
+![roboCar electrical diagram](diagram.png)
