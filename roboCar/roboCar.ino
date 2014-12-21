@@ -147,9 +147,12 @@ void loop() {
     }else {
       enginesState = 1;
       digitalWrite(state_led,HIGH);
+      //add depay before turning on the engines
+      delay(450);
     }
 
-    delay(100);
+    // 50ms delay to prevent unwanted state changes
+    delay(50);
   }
   
   prevButtonState = currentButtonState;
@@ -172,7 +175,7 @@ void loop() {
     
     currentRoutine = 'e';
     
-    if (random(0,1) == 1) {
+    if (random(0,2) == 1) {
       turn_left();
     }else {
       turn_right();
