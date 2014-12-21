@@ -23,6 +23,9 @@ int engines_switch = 12;
 int prevButtonState = HIGH;
 int currentButtonState = HIGH;
 
+//Current distance moved forward
+int movedForward = 0;
+
 void setup() {
   
   // Engines
@@ -162,7 +165,28 @@ void loop() {
     forward();
     currentRoutine = 'd';
     actionDelay = 50;
+    movedForward += actionDelay;    
+    
+    //Change direction
+    if (movedForward > 5000) {
+      
+      movedForward = 0;
+      
+      engine_stop();
+      delay(400);
+      
+      if (random(0,2) == 1) {
+        turn_left();
+      }else {
+        turn_right();
+      }
+      actionDelay = random(4,7) * 100;
+      
+    }
+    
   }else {
+    
+    movedForward = 0;
     
     if (currentRoutine != 'e') {
       engine_stop();
